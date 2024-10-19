@@ -199,3 +199,18 @@ class FightChess:
             number_surface = self.id_font.render(str(idx), True, (0, 0, 0))
             number_rect = number_surface.get_rect(center=pos)
             self.screen.blit(number_surface, number_rect)
+
+        #将棋子初始化
+        # for i in range(4):
+        #     piece_rect = self.blue_piece_rect.copy()
+        #     piece_rect.center = self.pos_list[i+8]
+        #     self.screen.blit(self.blue_piece_image, piece_rect)
+
+        path_blue = [18]+list(range(59,72))+list(range(20,57))+list(range(84,90))  # 蓝棋子的行走路径
+        path_red = [17]+list(range(33,72))+list(range(20,31))+list(range(72,78))  # 红棋子的行走路径
+        path_green = [16]+list(range(20,70))+list(range(90,96)) # 绿棋子的行走路径
+        path_yellow = [19]+list(range(53,72))+list(range(20,44))+list(range(78,84)) # 黄棋子的行走路径
+        
+        #将黄棋子的行走路径绘制出来
+        # for i in range(len(path_yellow)-1):
+        #     pygame.draw.line(self.screen, (255, 255, 0), self.pos_list[path_yellow[i]], self.pos_list[path_yellow[i+1]], 2)
