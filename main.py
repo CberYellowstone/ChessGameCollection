@@ -126,9 +126,7 @@ while True:
                 if winner:
                     game_over = True
             elif current_page == "飞行棋":
-                # fight_chess_env.click_positions.append(mouse_pos)
-                # print(fight_chess_env.click_positions)
-                pass
+                fight_chess_env.handle_click(mouse_pos)
 
     if current_page == "main":
         # 填充背景颜色
@@ -195,7 +193,7 @@ while True:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if handle_back_button_click(mouse_pos, back_rect):
-                pass
+                fight_chess_env.reset_game()
 
     # 更新显示
     pygame.display.flip()
