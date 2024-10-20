@@ -26,7 +26,7 @@ jobs:
       - name: dl upx
         run: python .github\getLatestUPX.py; 7z x upx.zip; mv upx-* upx;
       
-      - name: pack:full
+      - name: pack
         run: pyinstaller --upx-dir upx ChessGameCollection.spec -y ; mv dist\ChessGameCollection.exe ./;
       - name: upload
         uses: actions/upload-artifact@v3
@@ -34,11 +34,11 @@ jobs:
           name: ChessGameCollection.exe
           path: ChessGameCollection.exe
           
-      - name: release
-        uses: xresloader/upload-to-github-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          file: "ChessGameCollection.exe"
-          draft: false
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ChessGameCollection.exe
+          asset_name: ChessGameCollection.exe
+          tag: ${{ github.ref }}
 
