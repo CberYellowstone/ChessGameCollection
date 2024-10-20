@@ -1,0 +1,16 @@
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+
+# Ignore IDE specific files
+.vscode/
+
+# Ignore Mypy cache
+.mypy_cache/
+
+# Ignore Pyinstaller build
+dist/
+build/
+
+# Ignore temp
+temp/
