@@ -1,4 +1,5 @@
 import random
+import time
 
 import pygame
 
@@ -16,6 +17,9 @@ class FightChess:
         self.background_image = self.scale_background_image(
             self.bg_initial_image, width, height
         )
+
+        # 骰子图案
+        self.dice_emoji = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"]
 
         # 初始棋子坐标
         self.initial_pos_list = [
@@ -174,6 +178,7 @@ class FightChess:
 
         # 加载系统字体
         self.id_font = pygame.font.SysFont("Microsoft YaHei", 24, True)
+        self.dice_font = pygame.font.SysFont("Segoe UI Symbol", 72, False)
 
         # 初始化游戏状态
         self.reset_game()
@@ -228,6 +233,7 @@ class FightChess:
         self.already_rolled = False
         self.current_player = "green"
         self.dice_value = 0
+        self.displayed_dice_value = "⚀"
         self.pieces = {
             "green": [0, 1, 2, 3],
             "red": [4, 5, 6, 7],
@@ -239,10 +245,19 @@ class FightChess:
             for index in indices:
                 self.positions[index] = [color, 1]
         self.winner = None
+        self.dice_animating = False
 
     def roll_dice(self):
+        self.dice_animating = True
+        for _ in range(10):  # 动画持续10次循环
+            self.displayed_dice_value = self.dice_emoji[random.randint(0, 5)]
+            self.render()
+            pygame.display.flip()
+            pygame.time.delay(100)  # 每次循环延迟100毫秒
         self.dice_value = random.randint(1, 6)
+        self.displayed_dice_value = self.dice_emoji[self.dice_value - 1]
         self.already_rolled = True
+        self.dice_animating = False
         return self.dice_value
 
     def move_piece(self, piece_index):
@@ -264,7 +279,7 @@ class FightChess:
             # 如果在路径上
             # 获取当前棋子在路径上的位置
             current_index = self.paths[self.current_player].index(piece_index)
-            print(current_index)
+            # print(current_index)
             new_index = current_index + self.dice_value
             # 判断是否超出路径
             if new_index >= len(self.paths[self.current_player]):
@@ -328,8 +343,8 @@ class FightChess:
             if piece_rect.collidepoint(mouse_pos):
                 if self.move_piece(piece_index):
                     break
-        print(self.positions)
-        print(self.pieces)
+        # print(self.positions)
+        # print(self.pieces)
 
     def get_piece_rect(self, piece_index):
         piece_image = self.piece_image[self.current_player]
@@ -339,7 +354,7 @@ class FightChess:
 
     def get_dice_rect(self):
         dice_surface = self.id_font.render(f"掷骰子", True, (0, 0, 0))
-        dice_rect = dice_surface.get_rect(bottomright=(self.width - 10, 100))
+        dice_rect = dice_surface.get_rect(bottomright=(self.width - 10, 110))
         return dice_rect
 
     def render(self):
@@ -363,11 +378,11 @@ class FightChess:
                     number_rect = number_surface.get_rect(bottomleft=self.pos_list[pos])
                     self.screen.blit(number_surface, number_rect)
 
-        # 绘制编号
-        for idx, pos in enumerate(self.pos_list):
-            number_surface = self.id_font.render(str(idx), True, (0, 0, 0))
-            number_rect = number_surface.get_rect(center=pos)
-            self.screen.blit(number_surface, number_rect)
+        # # 绘制编号
+        # for idx, pos in enumerate(self.pos_list):
+        #     number_surface = self.id_font.render(str(idx), True, (0, 0, 0))
+        #     number_rect = number_surface.get_rect(center=pos)
+        #     self.screen.blit(number_surface, number_rect)
 
         # 显示当前玩家和骰子值
         player_surface = self.id_font.render(
@@ -376,10 +391,8 @@ class FightChess:
         player_rect = player_surface.get_rect(bottomright=(self.width - 10, 30))
         self.screen.blit(player_surface, player_rect)
 
-        dice_surface = self.id_font.render(
-            f"骰子值: {self.dice_value}", True, (0, 0, 0)
-        )
-        dice_rect = dice_surface.get_rect(bottomright=(self.width - 10, 60))
+        dice_surface = self.dice_font.render(self.displayed_dice_value, True, (0, 0, 0))
+        dice_rect = dice_surface.get_rect(bottomright=(self.width - 10, 100))
         self.screen.blit(dice_surface, dice_rect)
 
         # 显示掷骰子按钮
