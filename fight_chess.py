@@ -42,7 +42,7 @@ class FightChess:
             (22, 162),
             (432, 24),
             (163, 577),
-            (436, 576),
+            (574, 435),
             (47, 189),
             (87, 176),
             (124, 177),
@@ -171,7 +171,7 @@ class FightChess:
             + list(range(20, 57))
             + list(range(84, 90)),
             "yellow": [19]
-            + list(range(53, 72))
+            + list(range(46, 72))
             + list(range(20, 44))
             + list(range(78, 84)),
         }
@@ -179,6 +179,7 @@ class FightChess:
         # 加载系统字体
         self.id_font = pygame.font.SysFont("Microsoft YaHei", 24, True)
         self.dice_font = pygame.font.SysFont("Segoe UI Symbol", 72, False)
+        self.font = pygame.font.SysFont("Microsoft YaHei", 48, True)
 
         # 初始化游戏状态
         self.reset_game()
@@ -253,8 +254,9 @@ class FightChess:
             self.displayed_dice_value = self.dice_emoji[random.randint(0, 5)]
             self.render()
             pygame.display.flip()
-            pygame.time.delay(100)  # 每次循环延迟100毫秒
+            pygame.time.delay(80)  # 每次循环延迟80毫秒
         self.dice_value = random.randint(1, 6)
+        # self.dice_value = int(input("请输入骰子值："))
         self.displayed_dice_value = self.dice_emoji[self.dice_value - 1]
         self.already_rolled = True
         self.dice_animating = False
@@ -263,28 +265,52 @@ class FightChess:
     def move_piece(self, piece_index):
         # 判断是否在机场
         if piece_index in self.airports_index[self.current_player]:
-            if self.dice_value > 0:
+            if self.dice_value in [1, 6]:
                 self.pieces[self.current_player].remove(piece_index)
                 waiting_area = self.paths[self.current_player][0]
                 self.pieces[self.current_player].append(waiting_area)
                 # 判断待起飞区域是否有其他棋子
                 if self.positions[waiting_area]:
-                    # print(self.positions[waiting_area])
                     self.positions[waiting_area][1] += 1
                 else:
                     self.positions[waiting_area] = [self.current_player, 1]
             else:
-                pass
+                # 判断是否全部在机场
+                if all(
+                    piece in self.airports_index[self.current_player]
+                    for piece in self.pieces[self.current_player]
+                ):
+                    self.already_rolled = False
+                    self.current_player = {
+                        "green": "red",
+                        "red": "blue",
+                        "blue": "yellow",
+                        "yellow": "green",
+                    }[self.current_player]
+                    return True
+                else:
+                    return False
         else:
             # 如果在路径上
             # 获取当前棋子在路径上的位置
             current_index = self.paths[self.current_player].index(piece_index)
-            # print(current_index)
             new_index = current_index + self.dice_value
-            # 判断是否超出路径
-            if new_index >= len(self.paths[self.current_player]):
-                # 超出路径的步数会倒退走
-                new_index = 2 * len(self.paths[self.current_player]) - new_index
+            # 判断是否在终点区
+            if new_index >= 50:
+                # 判断是否超出路径
+                if new_index >= len(self.paths[self.current_player]):
+                    # 超出路径的步数会倒退走
+                    new_index = 56 - (new_index - 56)
+            else:
+                # 是否在index=18的位置
+                if new_index == 18:
+                    new_index = 30
+                # 是否满足2+4k的条件
+                elif new_index % 4 == 2:
+                    new_index += 4
+                    # 是否在index=18的位置
+                    if new_index == 18:
+                        new_index = 30
             new_position = self.paths[self.current_player][new_index]
             # 判断目标位置是否有其他棋子
             if self.positions[new_position]:
@@ -298,6 +324,14 @@ class FightChess:
                     for _ in range(opponent[1]):
                         self.pieces[opponent[0]].remove(new_position)
                         self.pieces[opponent[0]].append(self.paths[opponent[0]][0])
+                        # 如果等待区为空
+                        if self.positions[self.paths[opponent[0]][0]]:
+                            self.positions[self.paths[opponent[0]][0]][1] += 1
+                        else:
+                            self.positions[self.paths[opponent[0]][0]] = [
+                                opponent[0],
+                                1,
+                            ]
             else:
                 self.positions[new_position] = [self.current_player, 1]
             # 原位置有一颗棋子
@@ -312,11 +346,10 @@ class FightChess:
         self.already_rolled = False
 
         # 检查是否获胜
-        if all(
-            self.positions[piece] == len(self.paths[self.current_player]) - 1
-            for piece in self.pieces[self.current_player]
-        ):
-            self.winner = self.current_player
+        if self.positions[self.paths[self.current_player][-1]]:
+            if self.positions[self.paths[self.current_player][-1]][1] == 4:
+                self.winner = self.current_player
+                return True
 
         # 切换玩家
         self.current_player = {
@@ -343,8 +376,6 @@ class FightChess:
             if piece_rect.collidepoint(mouse_pos):
                 if self.move_piece(piece_index):
                     break
-        # print(self.positions)
-        # print(self.pieces)
 
     def get_piece_rect(self, piece_index):
         piece_image = self.piece_image[self.current_player]
@@ -412,9 +443,7 @@ class FightChess:
 
         # 显示胜利者
         if self.winner:
-            winner_surface = self.id_font.render(
-                f"{self.winner} 获胜", True, (255, 0, 0)
-            )
+            winner_surface = self.font.render(f"{self.winner} 获胜", True, (255, 0, 0))
             winner_rect = winner_surface.get_rect(
                 center=(self.width / 2, self.height / 2)
             )
