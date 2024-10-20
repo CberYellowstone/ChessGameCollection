@@ -21,7 +21,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
         
       - name: install req
-        run: pip install pyinstaller pygame numpy;
+        run: pip install -r requirements.txt;
         
       - name: dl upx
         run: python .github\getLatestUPX.py; 7z x upx.zip; mv upx-* upx;
