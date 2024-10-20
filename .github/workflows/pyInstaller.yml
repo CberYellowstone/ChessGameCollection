@@ -1,0 +1,44 @@
+name: Package Application with Pyinstaller
+
+on: 
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.12'
+          architecture: 'x64'
+          cache: 'pip'
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+        
+      - name: install req
+        run: pip install pyinstaller pygame numpy;
+        
+      - name: dl upx
+        run: python .github\getLatestUPX.py; 7z x upx.zip; mv upx-* upx;
+      
+      - name: pack:full
+        run: pyinstaller --upx-dir upx ChessGameCollection.spec -y ; mv dist\ChessGameCollection.exe ./;
+      - name: upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: ChessGameCollection.exe
+          path: ChessGameCollection.exe
+          
+      - name: release
+        uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: "ChessGameCollection.exe"
+          draft: false
+
