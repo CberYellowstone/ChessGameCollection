@@ -3,6 +3,8 @@ import time
 
 import pygame
 
+from utils import resource_path
+
 
 class FightChess:
     def __init__(self, screen, width, height):
@@ -13,7 +15,7 @@ class FightChess:
         self.initial_height = height
 
         # 加载飞行棋背景图片
-        self.bg_initial_image = pygame.image.load("res/background.svg")
+        self.bg_initial_image = pygame.image.load(resource_path("res/background.svg"))
         self.background_image = self.scale_background_image(
             self.bg_initial_image, width, height
         )
@@ -127,16 +129,24 @@ class FightChess:
         ]
 
         # 加载并缩放棋子图片
-        self.blue_piece_initial_image = pygame.image.load("res/蓝棋子.svg")
+        self.blue_piece_initial_image = pygame.image.load(
+            resource_path("res/蓝棋子.svg")
+        )
         self.blue_piece_image = self.scale_piece_img(self.blue_piece_initial_image)
 
-        self.red_piece_initial_image = pygame.image.load("res/红棋子.svg")
+        self.red_piece_initial_image = pygame.image.load(
+            resource_path("res/红棋子.svg")
+        )
         self.red_piece_image = self.scale_piece_img(self.red_piece_initial_image)
 
-        self.green_piece_initial_image = pygame.image.load("res/绿棋子.svg")
+        self.green_piece_initial_image = pygame.image.load(
+            resource_path("res/绿棋子.svg")
+        )
         self.green_piece_image = self.scale_piece_img(self.green_piece_initial_image)
 
-        self.yellow_piece_initial_image = pygame.image.load("res/黄棋子.svg")
+        self.yellow_piece_initial_image = pygame.image.load(
+            resource_path("res/黄棋子.svg")
+        )
         self.yellow_piece_image = self.scale_piece_img(self.yellow_piece_initial_image)
 
         self.piece_initial_image = {
