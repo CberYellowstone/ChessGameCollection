@@ -89,6 +89,12 @@ while True:
             fight_chess_env.handle_resize(width, height)
             # 更新游戏名称的位置
             HALF_WIDTH = width / 2
+            games = [
+                ("五子棋", (HALF_WIDTH, 200)),
+                ("中国象棋", (HALF_WIDTH, 300)),
+                ("井字棋", (HALF_WIDTH, 400)),
+                ("飞行棋", (HALF_WIDTH, 500)),
+            ]
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_f:
                 fullscreen = not fullscreen
