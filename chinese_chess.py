@@ -92,19 +92,9 @@ class ChineseChessEnv:
 
     def get_do_position(self, chess_pieces_position, move_position):
         """
-        传入位置已经经过
-        1.是否将行棋子为空
-        2.将行棋子是否是当前应执棋者
-        3.将行棋子的位置和将行位置上的棋子是否属于同一方
-        判断，然后
-
-        首先根据chess_pieces_position确定棋子的种类
-            根据棋子的种类和位置确定其在该位置下可行的
-            黑红双方在各个种类中自己判断，因为有些棋子有通用规则
-
-        :param chess_pieces_position: 棋子的位置
-        :param move_position: 棋子将行的位置
-        :return: 棋子到将行的位置是否可行 int(info)
+        chess_pieces_position: 棋子的当前位置
+        move_position: 棋子的目标位置
+        return: 布尔值，表示移动是否合法
         """
 
         assert type(chess_pieces_position) == tuple and type(move_position) == tuple
